@@ -13,16 +13,16 @@ jobs:
 
       - name: Setup Theos
         run: |
-          git clone --recurse-submodules https://github.com/theos/theos.git `${{ runner.temp }}/theos
-          find `${{ runner.temp }}/theos/bin -name "*.pl" -exec sed -i '' '1s|#!/usr/bin/perl|#!/usr/bin/env perl|' {} \;
-          echo "THEOS=`${{ runner.temp }}/theos" >> `$GITHUB_ENV
+          git clone --recurse-submodules https://github.com/theos/theos.git ${{ runner.temp }}/theos
+          find ${{ runner.temp }}/theos/bin -name "*.pl" -exec sed -i '' '1s|#!/usr/bin/perl|#!/usr/bin/env perl|' {} \;
+          echo "THEOS=${{ runner.temp }}/theos" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: brew install dpkg ldid
 
       - name: Install SDK
         run: |
-          cd `${{ runner.temp }}/theos/sdks
+          cd ${{ runner.temp }}/theos/sdks
           curl -sLO https://github.com/theos/sdks/archive/refs/heads/master.zip
           unzip -q master.zip
           mv sdks-master/iPhoneOS16.5.sdk .
