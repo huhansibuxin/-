@@ -1,0 +1,9 @@
+Package: com.huhansibuxin.wcunlock
+Name: WCUnlock
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Bypass WCallRecorder license check
+Maintainer: huhansibuxin
+Author: huhansibuxin
+Section: Tweaks
+Depends: mobilesubstrate
