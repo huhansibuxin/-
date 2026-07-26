@@ -1,13 +1,13 @@
-TARGET := iphone:clang:latest:14.0
-ARCHS = arm64 arm64e
+export TARGET = iphone:clang:latest:14.0
+export ARCHS = arm64 arm64e
 
-include $(THEOS)/makefiles/common.mk
+INSTALL_TARGET_PROCESSES = com.tencent.xin com.tencent.qy.xin
+export THEOS_PACKAGE_SCHEME = rootless
 
-LIBRARY_NAME = WCUnlock
+TWEAK_NAME = WCUnlock
 
 WCUnlock_FILES = Tweak.xm
 WCUnlock_CFLAGS = -fobjc-arc
-WCUnlock_LDFLAGS = -dynamiclib
-WCUnlock_INSTALL_TARGET_PROCESSES = com.tencent.xin com.tencent.qy.xin
 
-include $(THEOS_MAKE_PATH)/library.mk
+include $(THEOS)/makefiles/common.mk
+include $(THEOS_MAKE_PATH)/tweak.mk
