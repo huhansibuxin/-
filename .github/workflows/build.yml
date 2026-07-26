@@ -16,19 +16,13 @@ jobs:
           bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
           echo "THEOS=$HOME/theos" >> $GITHUB_ENV
 
-      - name: Setup SDK (iOS 14.0)
+      - name: Link Xcode SDK
         run: |
-          curl -fsSL https://api.github.com/repos/theos/sdks/tarball/master -o sdks.tar.gz || true
-          if [ -f sdks.tar.gz ]; then
-            tar xzf sdks.tar.gz -C /tmp/
-            SDK_DIR=$(find /tmp -maxdepth 2 -name "iPhoneOS14.0.sdk" -type d 2>/dev/null | head -1)
-            if [ -n "$SDK_DIR" ]; then
-              cp -r "$SDK_DIR" "$THEOS/sdks/"
-              echo "SDK copied from tarball"
-            fi
-          fi
-          ls "$THEOS/sdks/" 2>/dev/null || echo "no sdks dir yet"
-          $THEOS/bin/nic.pl --help 2>&1 | head -3 || true
+          SDK=$(xcrun --sdk iphoneos --show-sdk-path)
+          mkdir -p "$HOME/theos/sdks"
+          ln -s "$SDK" "$HOME/theos/sdks/iPhoneOS.sdk"
+          ls -la "$HOME/theos/sdks/"
+          echo "SDKVERSION=$(xcrun --sdk iphoneos --show-sdk-version)" >> $GITHUB_ENV
 
       - name: Build
         run: |
