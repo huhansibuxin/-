@@ -1,11 +1,13 @@
+#import <Foundation/Foundation.h>
 #import <objc/runtime.h>
+#include <string.h>
 
-// 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ Fake IMPs 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ──────────────── Fake IMPs ────────────────
 static BOOL fake_isProxy(id self, SEL _cmd) { return NO; }
 static void fake_lock(id self, SEL _cmd) {}
 static void fake_unlock(id self, SEL _cmd) {}
 
-// 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ Patch a single class 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ──────────────── Patch a single class ────────────────
 static void patch_class(Class cls) {
     unsigned int count;
     Method *methods = class_copyMethodList(cls, &count);
@@ -30,7 +32,7 @@ static void patch_class(Class cls) {
     free(methods);
 }
 
-// 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ Constructor 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+// ──────────────── Constructor ────────────────
 __attribute__((constructor))
 static void WCUnlock_init() {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC),
