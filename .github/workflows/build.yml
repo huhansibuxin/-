@@ -2,35 +2,37 @@ name: Build WCUnlock
 
 on:
   push:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-14
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Theos
         run: |
-          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
-          echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+          git clone --recurse-submodules https://github.com/theos/theos.git `${{ runner.temp }}/theos
+          find `${{ runner.temp }}/theos/bin -name "*.pl" -exec sed -i '' '1s|#!/usr/bin/perl|#!/usr/bin/env perl|' {} \;
+          echo "THEOS=`${{ runner.temp }}/theos" >> `$GITHUB_ENV
 
-      - name: Link Xcode SDK
+      - name: Install dependencies
+        run: brew install dpkg ldid
+
+      - name: Install SDK
         run: |
-          SDK=$(xcrun --sdk iphoneos --show-sdk-path)
-          mkdir -p "$HOME/theos/sdks"
-          ln -s "$SDK" "$HOME/theos/sdks/iPhoneOS.sdk"
-          ls -la "$HOME/theos/sdks/"
-          echo "SDKVERSION=$(xcrun --sdk iphoneos --show-sdk-version)" >> $GITHUB_ENV
+          cd `${{ runner.temp }}/theos/sdks
+          curl -sLO https://github.com/theos/sdks/archive/refs/heads/master.zip
+          unzip -q master.zip
+          mv sdks-master/iPhoneOS16.5.sdk .
+          rm -rf sdks-master master.zip
 
       - name: Build
-        run: |
-          export THEOS=$HOME/theos
-          make package FINALPACKAGE=1
+        run: make package
 
       - name: Upload deb
         uses: actions/upload-artifact@v4
         with:
-          name: WCUnlock-deb
+          name: WCUnlock
           path: packages/*.deb
